@@ -6,6 +6,7 @@
 #include "client.h"
 #include <QMouseEvent>
 #include <QTimer>
+#include <QSound>
 
 const int INTERVAL = 1000;
 const int LIMITTIME = 20000;
@@ -21,6 +22,7 @@ private:
     int canChess, have;
     QTimer* timer;
     int totTime, limiTime, idTimer;
+    QSound winSound, lostSound;
 private slots:
     void initMyServer();
     void initMyClient(QString ip, int port);

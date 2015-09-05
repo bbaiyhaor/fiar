@@ -124,7 +124,7 @@ void Server::gameReady(int player)
         playerTotal++;
     else
         qDebug() << "error in server::gameReady" << endl;
-    if (playerTotal == 2)
+    if (! (playerTotal % 2))
         startgame();
 }
 //  players is ready for beginning

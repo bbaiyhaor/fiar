@@ -153,6 +153,10 @@ void Fiar::endTime()
 
 void Fiar::Win(int who)
 {
+    if (who == player)
+        winSound.play();
+    else
+        lostSound.play();
     QMessageBox::StandardButton reply;
     QString info = "<h2>you have ";
     if (who == player)
@@ -405,8 +409,8 @@ void Fiar::clearGame()
     totTime = 0;
     me.clear();
     endTime();
-    if (! player)
-        myServer->playerTotal = 0;
+//    if (! player)
+//        myServer->playerTotal = 0;
 }
 //  clear information and play again
 
@@ -432,9 +436,11 @@ Fiar::Fiar():
   , have(0)
   , timer(new QTimer(this))
   , totTime(0)
-
   , idTimer(-1)
+  , winSound(":/wav/wav/win.wav")
+  , lostSound(":/wav/wav/lost.wav")
 {
+    this->setWindowIcon(QIcon(":/ico/ico/fiar.ico"));
     eventFlag = false;
     connect(this, SIGNAL(gameReady(int)), this, SLOT(playerReady(int)));
     //  relate to game begining
@@ -455,6 +461,8 @@ Fiar::Fiar():
     //  relate to save board
     connect(this, SIGNAL(openBoard()), this, SLOT(slotOpenBoard()));
     //  relate to open board
+    connect(this, SIGNAL(initMyClient(QString,int)), this->kid, SLOT(initMyClient(QString,int)));
+    //  relate to client soft keyboard
 }
 
 void Fiar::paintEvent(QPaintEvent *e)

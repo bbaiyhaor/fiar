@@ -6,6 +6,7 @@
 
 QT       += core gui
 QT += network
+QT += multimedia
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Fiar
@@ -18,13 +19,18 @@ SOURCES += main.cpp\
     server.cpp \
     tcpsocket.cpp \
     tcpthread.cpp \
-    client.cpp
+    client.cpp \
+    softkeyoard.cpp
 
 HEADERS  += board.h \
     fiar.h \
     server.h \
     tcpsocket.h \
     tcpthread.h \
-    client.h
+    client.h \
+    softkeyoard.h
 
 FORMS    += board.ui
+
+RESOURCES += \
+    res.qrc

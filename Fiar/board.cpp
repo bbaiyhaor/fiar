@@ -13,8 +13,10 @@
 Board::Board(Fiar* kid, QWidget *parent) :
     QDialog(parent)
   , player(-1)
+  , soft(this)
   , ui(new Ui::Board)
   , kid(kid)
+
 
 {
     ui->setupUi(this);
@@ -29,6 +31,8 @@ Board::Board(Fiar* kid, QWidget *parent) :
     ui->SaveBoard->setEnabled(false);
     ui->StartGame->setEnabled(false);
     ui->OpenBoard->setEnabled(false);
+    connect(&soft, SIGNAL(IPAdress(QString)), this, SLOT(IPAdress(QString)));
+    //  soft keyboard
 }
 
 Board::~Board()
@@ -127,20 +131,33 @@ void Board::on_CreateServer_clicked()
 {
     QString hostname = QHostInfo::localHostName(), ipAddress;
     QHostInfo hostInfo = QHostInfo::fromName(hostname);
-    QList<QHostAddress> listAddress = hostInfo.addresses();
-    if (! listAddress.isEmpty())
+    QTcpSocket* trial = new QTcpSocket(this);
+    trial->connectToHost("baidu.com", 80);
+    if (trial->waitForConnected(5000))
     {
-        for (int i = 0; i < listAddress.count(); i++)
+        ipAddress = trial->localAddress().toString();
+        trial->abort();
+        delete trial;
+        trial = 0;
+    }
+    else
+    {
+        QList<QHostAddress> listAddress = hostInfo.addresses();
+        if (! listAddress.isEmpty())
         {
-            QHostAddress address = listAddress.at(i);
-            if (address.protocol() == QAbstractSocket::IPv4Protocol
-                    && address != QHostAddress(QHostAddress::LocalHost))
+            for (int i = 0; i < listAddress.count(); i++)
             {
-                ipAddress = address.toString();
-                qDebug() << "ip " << ipAddress << endl;
+                QHostAddress address = listAddress.at(i);
+                if (address.protocol() == QAbstractSocket::IPv4Protocol
+                    && address != QHostAddress(QHostAddress::LocalHost))
+                {
+                    ipAddress = address.toString();
+                    break;
+                }
             }
         }
     }
+    qDebug() << "ip " << ipAddress << endl;
     QDialog request(this);
     QLabel hostLabel("主机名: ");
     QLineEdit LineEditLocalHostName(hostname);
@@ -149,23 +166,26 @@ void Board::on_CreateServer_clicked()
     QLineEdit LineEditAddress(ipAddress);
     LineEditAddress.setReadOnly(true);
     QPushButton detailBtn("创建");
+    QPushButton cancel("取消");
     QGridLayout mainLayout(&request);
     mainLayout.addWidget(&hostLabel, 0, 0);
     mainLayout.addWidget(&LineEditLocalHostName, 0, 1);
     mainLayout.addWidget(&ipLabel, 1, 0);
     mainLayout.addWidget(&LineEditAddress, 1, 1);
     mainLayout.addWidget(&detailBtn, 2, 0, 1, 2);
+    mainLayout.addWidget(&cancel, 2, 4, 1, 2);
     connect(&detailBtn, SIGNAL(clicked()), this->kid, SLOT(initMyServer()));
     connect(&detailBtn, SIGNAL(clicked()), &request, SLOT(close()));
+    connect(&cancel, SIGNAL(clicked()), &request, SLOT(close()));
     request.exec();
 }
 //  create host
 
 void Board::on_JoinRoom_clicked()
 {
-    QDialog request(this);
+   /* QDialog request(this);
     QLabel portLabel("端口: ");
-    QLineEdit LineEditLocalHostName;
+    QLineEdit LineEditLocalHostName("1234");
     QLabel ipLabel("IP 地址: ");
     QLineEdit LineEditAddress;
     QPushButton detailBtn("加入");
@@ -181,8 +201,16 @@ void Board::on_JoinRoom_clicked()
     QString ip, port;
     port = LineEditLocalHostName.text();
     ip = LineEditAddress.text();
-    emit initMyClient(ip, port.toInt());
+    emit initMyClient(ip, port.toInt());*/
+    soft.show();
+    soft.exec();
 }
+
+void Board::IPAdress(QString ip)
+{
+    emit initMyClient(ip, 1234);
+}
+
 //  join room
 
 void Board::on_StartGame_clicked()
@@ -200,11 +228,13 @@ void Board::on_Regret_clicked()
 {
     emit regretRequest();
 }
+//  take a step back
 
 void Board::on_SaveBoard_clicked()
 {
     emit saveBoard();
 }
+//  save board
 
 void Board::on_AdmitLoser_clicked()
 {
@@ -216,3 +246,4 @@ void Board::on_OpenBoard_clicked()
 {
     emit openBoard();
 }
+//  continue last chess

@@ -3,6 +3,8 @@
 
 #include "ui_board.h"
 
+#include "softkeyoard.h"
+
 #include <QDialog>
 
 #include <QStack>
@@ -23,6 +25,7 @@ public:
     int boardbool[BOARD_SIZE][BOARD_SIZE];
     QStack<QPoint*> me;
     int player;
+    SoftKeyoard soft;
 public:
     void paintEvent(QPaintEvent *);
     QPoint calculate(int, int);
@@ -52,7 +55,7 @@ private slots:
     void on_AdmitLoser_clicked();
 
     void on_OpenBoard_clicked();
-
+    void IPAdress(QString);
 private:
     Ui::Board *ui;
     Fiar* kid;
