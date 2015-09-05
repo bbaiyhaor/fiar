@@ -6,6 +6,7 @@
 
 QT       += core gui
 QT += network
+CONFIG += static
 QT += multimedia
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
