@@ -26,8 +26,8 @@ SoftKeyoard::SoftKeyoard(QWidget *parent) :
     connect(mapper, SIGNAL(mapped(int)), this, SLOT(keyPress(int)));
     for (int i = 0; i < 5; i++)
         myGrid->addWidget(&number[i], 0, i << 1, 2, 2);
-    for (int i = 6; i < 10; i++)
-        myGrid->addWidget(&number[i], 3, (i - 6) << 1, 2, 2);
+    for (int i = 5; i < 10; i++)
+        myGrid->addWidget(&number[i], 3, (i - 5) << 1, 2, 2);
     myGrid->addWidget(dot, 6, 0, 2, 2);
     myGrid->addWidget(ok, 6, 4, 2, 2);
     myGrid->addWidget(cancel, 6, 8, 2, 2);
